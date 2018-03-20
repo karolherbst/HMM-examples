@@ -7,7 +7,7 @@ constexpr uint32_t PLATFORM = 0;
 constexpr uint32_t DEVICE = 0;
 
 // taken from https://github.com/Dakkers/OpenCL-examples/blob/master/example00/main.cpp
-cl::Kernel initCL(const std::string &filename) {
+cl::Kernel initCL(const std::string &filename, cl::CommandQueue &queue) {
 	std::vector<cl::Platform> all_platforms;
 	cl::Platform::get(&all_platforms);
 
@@ -66,6 +66,12 @@ cl::Kernel initCL(const std::string &filename) {
 	cl::Kernel kernel(program, "test", &ret);
 	if (ret) {
 		std::cerr << "Failed to create kernel" << std::endl;
+		throw -ret;
+	}
+
+	queue = cl::CommandQueue(context, default_device, 0, &ret);
+	if (ret) {
+		std::cerr << "Failed to create Command Queue" << std::endl;
 		throw -ret;
 	}
 

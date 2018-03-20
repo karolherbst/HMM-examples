@@ -19,3 +19,11 @@ target_link_libraries(linkedList
 	OpenCL::OpenCL
 	HMMExamplesBase
 )
+
+add_executable(fma
+	fma.cpp
+)
+target_link_libraries(fma
+	OpenCL::OpenCL
+	HMMExamplesBase
+)
