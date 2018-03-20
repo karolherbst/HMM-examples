@@ -4,10 +4,10 @@ project(HMM-Examples)
 find_package(OpenCL 2.0)
 
 include_directories(${CMAKE_CURRENT_DIRECTORY})
-
 add_library(HMMExamplesBase STATIC
 	base.cpp
 	base.h
+	defines.h
 )
 
 add_executable(linkedList
