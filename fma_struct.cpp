@@ -15,9 +15,9 @@ int main() {
 	cl_int ret;
 
 	constexpr uint64_t size = 1000;
-	uint64_t res[size];
-	struct FMAData data[size];
-	uint64_t correct_results[size];
+	uint64_t *res = new uint64_t[size];
+	struct FMAData *data = new struct FMAData[size];
+	uint64_t *correct_results = new uint64_t[size];
 
 	for (int i = 0; i < size; ++i) {
 		data[i].a = rand() % 0x200 + 1;
@@ -27,8 +27,8 @@ int main() {
 		correct_results[i] = data[i].a * data[i].b + data[i].c;
 	}
 
-	ret = kernel.setArg(0, &res);
-	ret |= kernel.setArg(1, &data);
+	ret = kernel.setArg(0, res);
+	ret |= kernel.setArg(1, data);
 	ret |= kernel.setArg(2, size);
 	if (ret) {
 		std::cerr << "Failed to set args" << std::endl;
