@@ -2,5 +2,8 @@
 
 kernel void test(global long *res, global struct FMAData *data, long size)
 {
-	*res = data[0].a * data[0].b + data[0].c;
+	int id = get_global_id(0);
+	if (id >= size)
+		return;
+	res[id] = data[id].a * data[id].b + data[id].c;
 }
