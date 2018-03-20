@@ -1,23 +1,19 @@
-#define CL_HPP_TARGET_OPENCL_VERSION 200
-
 #include <fstream>
 #include <iostream>
 
-#include <CL/cl2.hpp>
-
-#include "example_list.h"
+#include "base.h"
 
 constexpr uint32_t PLATFORM = 0;
 constexpr uint32_t DEVICE = 0;
 
 // taken from https://github.com/Dakkers/OpenCL-examples/blob/master/example00/main.cpp
-int main() {
+cl::Kernel initCL(const std::string &filename) {
 	std::vector<cl::Platform> all_platforms;
 	cl::Platform::get(&all_platforms);
 
 	if (all_platforms.empty()) {
 		std::cout<<" No devices found. Check OpenCL installation!" << std::endl;
-		return EXIT_FAILURE;
+		throw EXIT_FAILURE;
 	}
 
 	cl::Platform default_platform=all_platforms[PLATFORM];
@@ -28,7 +24,7 @@ int main() {
 	default_platform.getDevices(CL_DEVICE_TYPE_GPU, &all_devices);
 	if (all_devices.empty()) {
 		std::cout<<" No devices found. Check OpenCL installation!" << std::endl;
-		return EXIT_FAILURE;
+		throw EXIT_FAILURE;
 	}
 
 	cl::Device default_device=all_devices[DEVICE];
@@ -36,10 +32,10 @@ int main() {
 
 	cl::Context context({default_device});
 
-	std::ifstream file("main.cl");
+	std::ifstream file(filename);
 	if (!file.is_open()) {
-		std::cerr << "Failed to open \"main.cl\"\n";
-		return EXIT_FAILURE;
+		std::cerr << "Failed to open \"" << filename << "\"\n";
+		throw EXIT_FAILURE;
 	}
 
 	std::string source((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
@@ -48,8 +44,8 @@ int main() {
 	cl_int ret;
 	cl::Program program(context, sources, &ret);
 	if (ret) {
-		std::cerr << "Failed to create program from \"main.cl\"\n";
-		return -ret;
+		std::cerr << "Failed to create program" << std::endl;
+		throw -ret;
 	}
 
 	ret = program.compile();
@@ -58,22 +54,20 @@ int main() {
 		program.getBuildInfo(default_device, CL_PROGRAM_BUILD_LOG, &buildLog);
 		std::cerr << buildLog << std::endl;
 	} else if (ret) {
-		std::cerr << "Failed to compile \"main.cl\"\n";
-		return -ret;
+		std::cerr << "Failed to compile" << std::endl;
+		throw -ret;
 	}
 	program = cl::linkProgram({ program }, nullptr, nullptr, nullptr, &ret);
 	if (ret) {
-		std::cerr << "Failed to link \"main.cl\"\n";
-		return -ret;
+		std::cerr << "Failed to link" << std::endl;
+		throw -ret;
 	}
-
-	struct ExampleList list;
-//	initLinkedList(&list.list);
-	list.value = 5;
 
 	cl::Kernel kernel(program, "test", &ret);
 	if (ret) {
 		std::cerr << "Failed to create kernel" << std::endl;
-		return -ret;
+		throw -ret;
 	}
+
+	return kernel;
 }

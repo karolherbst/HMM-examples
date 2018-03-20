@@ -10,4 +10,12 @@ struct ExampleList {
 	int value;
 };
 
-void initExampleList(struct ExampleList *);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void initExampleList(global struct ExampleList *);
+
+#ifdef __cplusplus
+}
+#endif
