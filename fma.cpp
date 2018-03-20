@@ -30,5 +30,6 @@ int main() {
 		std::cerr << "Wrong result " << res << " != " << result << std::endl;
 		return EXIT_FAILURE;
 	}
+	std::cout << "Result is correct!" << std::endl;
 	return EXIT_SUCCESS;
 }
