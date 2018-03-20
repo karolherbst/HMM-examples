@@ -1,6 +1,6 @@
 #include "fma_struct.h"
 
-kernel void test(global long *res, global struct FMAData *data, long size)
+kernel void test(global float *res, global struct FMAData *data, long size)
 {
 	int id = get_global_id(0);
 	if (id >= size)

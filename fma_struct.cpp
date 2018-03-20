@@ -1,7 +1,9 @@
 #include <time.h>
 
+#include <cmath>
 #include <cstdlib>
 
+#include <iomanip>
 #include <iostream>
 
 #include "base.h"
@@ -15,16 +17,16 @@ int main() {
 	cl_int ret;
 
 	constexpr uint64_t size = 1000;
-	uint64_t *res = new uint64_t[size];
+	float *res = new float[size];
 	struct FMAData *data = new struct FMAData[size];
-	uint64_t *correct_results = new uint64_t[size];
+	float *correct_results = new float[size];
 
 	for (int i = 0; i < size; ++i) {
-		data[i].a = rand() % 0x200 + 1;
-		data[i].b = rand() % 0x200 + 1;
-		data[i].c = rand() % 0x200 + 1;
+		data[i].a = static_cast<float>(rand()) / static_cast<float>(RAND_MAX / 100);
+		data[i].b = static_cast<float>(rand()) / static_cast<float>(RAND_MAX / 100);
+		data[i].c = static_cast<float>(rand()) / static_cast<float>(RAND_MAX / 100);
 		res[i] = 0;
-		correct_results[i] = data[i].a * data[i].b + data[i].c;
+		correct_results[i] = std::fma(data[i].a, data[i].b, data[i].c);
 	}
 
 	ret = kernel.setArg(0, res);
@@ -38,12 +40,12 @@ int main() {
 	queue.finish();
 
 	for (int i = 0; i < size; ++i) {
-		uint64_t result = correct_results[i];
-		if (res[i] != result) {
-			std::cerr << "Wrong result " << i << ": " << res[i] << " != " << result << std::endl;
+		float result = correct_results[i];
+		if (std::fabs(res[i] - result) > std::numeric_limits<float>::epsilon()) {
+			std::cerr << std::fixed << std::setprecision(15) << "Wrong result " << i << ": " << res[i] << " != " << result << std::endl;
 			return EXIT_FAILURE;
 		} else
-			std::cout << "Result is correct! " << data[i].a << " * " << data[i].b << " + " << data[i].c << " = " << result << std::endl;
+			std::cout << std::fixed << std::setprecision(3) << "Result is correct! " << data[i].a << " * " << data[i].b << " + " << data[i].c << " = " << result << std::endl;
         }
 	return EXIT_SUCCESS;
 }

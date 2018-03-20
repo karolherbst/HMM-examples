@@ -1,5 +1,5 @@
 struct FMAData {
-	uint a;
-	uint b;
-	uint c;
+	float a;
+	float b;
+	float c;
 };
