@@ -9,9 +9,10 @@ int main() {
 
 	cl_command_queue queue;
 	cl_kernel kernel;
+	cl_device_svm_capabilities svm;
 	cl_int ret;
 
-	ret = initCL("fma.cl", &kernel, &queue);
+	ret = initCL("fma.cl", &kernel, &queue, &svm);
 	if (ret)
 		return ret;
 

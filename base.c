@@ -6,7 +6,7 @@
 const uint32_t PLATFORM = 0;
 const uint32_t DEVICE = 0;
 
-cl_int initCL(const char *filename, cl_kernel *kernel, cl_command_queue *queue) {
+cl_int initCL(const char *filename, cl_kernel *kernel, cl_command_queue *queue, cl_device_svm_capabilities *svm) {
 	cl_int ret;
 
 	cl_platform_id *platforms = malloc(sizeof(*platforms) * 10);
@@ -73,6 +73,16 @@ cl_int initCL(const char *filename, cl_kernel *kernel, cl_command_queue *queue) 
 		return ret;
 	}
 	printf("CL_DEVICE_VERSION: %s\n", device_version);
+
+	ret = clGetDeviceInfo(default_device, CL_DEVICE_SVM_CAPABILITIES, sizeof(*svm), svm, NULL);
+	if (ret) {
+		printf("Failed to check SVM support!\n");
+		*svm = 0;
+	}
+	printf("CL_DEVICE_SVM_COARSE_GRAIN_BUFFER: %i\n", *svm & CL_DEVICE_SVM_COARSE_GRAIN_BUFFER ? 1 : 0);
+	printf("CL_DEVICE_SVM_FINE_GRAIN_BUFFER: %i\n", *svm & CL_DEVICE_SVM_FINE_GRAIN_BUFFER ? 1 : 0);
+	printf("CL_DEVICE_SVM_FINE_GRAIN_SYSTEM: %i\n", *svm & CL_DEVICE_SVM_FINE_GRAIN_SYSTEM ? 1 : 0);
+	printf("CL_DEVICE_SVM_FINE_ATOMICS: %i\n", *svm & CL_DEVICE_SVM_ATOMICS ? 1 : 0);
 
 	cl_context context = clCreateContext(NULL, 1, &default_device, NULL, NULL, &ret);
 	if (ret) {
