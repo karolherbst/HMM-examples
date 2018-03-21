@@ -30,8 +30,18 @@ target_link_libraries(fma
 
 add_executable(fma_struct
 	fma_struct.cpp
+	fma_struct.h
 )
 target_link_libraries(fma_struct
+	OpenCL::OpenCL
+	HMMExamplesBase
+)
+
+add_executable(fma_struct_ptrs
+	fma_struct_ptrs.cpp
+	fma_struct_ptrs.h
+)
+target_link_libraries(fma_struct_ptrs
 	OpenCL::OpenCL
 	HMMExamplesBase
 )
