@@ -19,9 +19,12 @@ int main() {
 		return ret;
 
 	const uint64_t size = 10;
-	float *res = malloc(sizeof(float) * size);
-	struct FMAData *data = malloc(sizeof(struct FMAData) *size);
-	float *correct_results = malloc(sizeof(float) * size);
+	const uint64_t byteSize = size * sizeof(float);
+	const uint64_t byteSizeStruct = size * sizeof(struct FMAData);
+
+	float *res = malloc(byteSize);
+	struct FMAData *data = malloc(byteSizeStruct);
+	float *correct_results = malloc(byteSize);
 
 	for (int i = 0; i < size; ++i) {
 		data[i].a = (float)(rand()) / (float)(RAND_MAX / 100);
@@ -31,9 +34,21 @@ int main() {
 		correct_results[i] = fma(data[i].a, data[i].b, data[i].c);
 	}
 
-	ret = clSetKernelArgSVMPointer(kernel, 0, res);
-	ret |= clSetKernelArgSVMPointer(kernel, 1, data);
+	cl_mem outBuffer;
+	if (svm & CL_DEVICE_SVM_FINE_GRAIN_SYSTEM) {
+		ret = clSetKernelArgSVMPointer(kernel, 0, res);
+		ret |= clSetKernelArgSVMPointer(kernel, 1, data);
+	} else {
+		outBuffer = clCreateBuffer(context, CL_MEM_WRITE_ONLY, byteSize, NULL, &ret);
+		cl_mem structBuffer = clCreateBuffer(context, CL_MEM_READ_ONLY, byteSizeStruct, NULL, &ret);
+
+		ret = clEnqueueWriteBuffer(queue, structBuffer, 0, 0, byteSizeStruct, data, 0, NULL, NULL);
+
+		ret  = clSetKernelArg(kernel, 0, sizeof(cl_mem), &outBuffer);
+		ret |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &structBuffer);
+	}
 	ret |= clSetKernelArg(kernel, 2, sizeof(size), &size);
+
 	if (ret) {
 		printf("Failed to set args\n");
 		return ret;
@@ -42,6 +57,8 @@ int main() {
 	const size_t global_size[3] = { size, 0, 0 };
 	const size_t local_size[3] = { 1, 0, 0 };
 	clEnqueueNDRangeKernel(queue, kernel, 1, NULL, global_size, local_size, 0, NULL, NULL);
+	if (!(svm & CL_DEVICE_SVM_FINE_GRAIN_SYSTEM))
+		clEnqueueReadBuffer(queue, outBuffer, 0, 0, byteSize, res, 0, NULL, NULL);
 	clFinish(queue);
 
 	for (int i = 0; i < size; ++i) {

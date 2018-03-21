@@ -18,6 +18,11 @@ int main() {
 	if (ret)
 		return ret;
 
+	if (!(svm & CL_DEVICE_SVM_FINE_GRAIN_SYSTEM)) {
+		printf("No CL_DEVICE_SVM_FINE_GRAIN_SYSTEM support!\n");
+		return EXIT_FAILURE;
+	}
+
 	const uint64_t size = 10;
 	float *res = malloc(sizeof(float) * size);
 	struct FMAData *data = malloc(sizeof(struct FMAData) *size);
