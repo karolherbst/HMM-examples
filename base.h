@@ -1,4 +1,3 @@
-#define CL_HPP_TARGET_OPENCL_VERSION 200
-#include <CL/cl2.hpp>
+#include <CL/cl.h>
 
-cl::Kernel initCL(const std::string &filename, cl::CommandQueue&);
+cl_int initCL(const char *filename, cl_kernel *, cl_command_queue *);

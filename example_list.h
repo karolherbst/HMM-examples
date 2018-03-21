@@ -6,12 +6,4 @@ struct ExampleList {
 	int value;
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void initExampleList(global struct ExampleList *);
-
-#ifdef __cplusplus
-}
-#endif

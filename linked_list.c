@@ -2,8 +2,11 @@
 #include "example_list.h"
 
 int main() {
-	cl::CommandQueue queue;
-	cl::Kernel kernel = initCL("linked_list.cl", queue);
+	cl_command_queue queue;
+	cl_kernel kernel;
+
+	if (initCL("linked_list.cl", &kernel, &queue))
+		return EXIT_FAILURE;
 
 	struct ExampleList list;
 	initExampleList(&list);
