@@ -1,4 +1,7 @@
-kernel void test(global long *res, global int *a, global int *b, global long *c, long size)
+kernel void test(global float *res, global float *a, global float *b, global float *c, long size)
 {
-	*res = a[0] * b[0] + c[0];
+	int id = get_global_id(0);
+	if (id >= size)
+		return;
+	res[id] = fma(a[id], b[id], c[id]);
 }
