@@ -8,12 +8,13 @@
 int main() {
 	srand(time(NULL));
 
+	cl_context context;
 	cl_command_queue queue;
 	cl_kernel kernel;
 	cl_device_svm_capabilities svm;
 	cl_int ret;
 
-	ret = initCL("fma_struct_ptrs.cl", &kernel, &queue, &svm);
+	ret = initCL("fma_struct_ptrs.cl", &context, &kernel, &queue, &svm);
 	if (ret)
 		return ret;
 

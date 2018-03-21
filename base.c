@@ -6,7 +6,7 @@
 const uint32_t PLATFORM = 0;
 const uint32_t DEVICE = 0;
 
-cl_int initCL(const char *filename, cl_kernel *kernel, cl_command_queue *queue, cl_device_svm_capabilities *svm) {
+cl_int initCL(const char *filename, cl_context *context, cl_kernel *kernel, cl_command_queue *queue, cl_device_svm_capabilities *svm) {
 	cl_int ret;
 
 	cl_platform_id *platforms = malloc(sizeof(*platforms) * 10);
@@ -84,7 +84,7 @@ cl_int initCL(const char *filename, cl_kernel *kernel, cl_command_queue *queue, 
 	printf("CL_DEVICE_SVM_FINE_GRAIN_SYSTEM: %i\n", *svm & CL_DEVICE_SVM_FINE_GRAIN_SYSTEM ? 1 : 0);
 	printf("CL_DEVICE_SVM_FINE_ATOMICS: %i\n", *svm & CL_DEVICE_SVM_ATOMICS ? 1 : 0);
 
-	cl_context context = clCreateContext(NULL, 1, &default_device, NULL, NULL, &ret);
+	*context = clCreateContext(NULL, 1, &default_device, NULL, NULL, &ret);
 	if (ret) {
 		printf("Failed to create context!\n");
 		return ret;
@@ -114,7 +114,7 @@ cl_int initCL(const char *filename, cl_kernel *kernel, cl_command_queue *queue, 
 		return -1;
 	}
 
-	cl_program program = clCreateProgramWithSource(context, 1, (const char **)&file_buffer, NULL, NULL);
+	cl_program program = clCreateProgramWithSource(*context, 1, (const char **)&file_buffer, NULL, NULL);
 	free(file_buffer);
 
 	ret = clBuildProgram(program, 1, &default_device, NULL, NULL, NULL);
@@ -135,7 +135,7 @@ cl_int initCL(const char *filename, cl_kernel *kernel, cl_command_queue *queue, 
 		return -ret;
 	}
 
-	*queue = clCreateCommandQueue(context, default_device, 0, &ret);
+	*queue = clCreateCommandQueue(*context, default_device, 0, &ret);
 	if (ret) {
 		printf("Failed to create Command Queue!\n");
 		return ret;
