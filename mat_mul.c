@@ -86,7 +86,7 @@ int main() {
 	}
 
 	const size_t global_size[3] = { m3width, m3height, 0 };
-	const size_t local_size[3] = { 1, 1, 0 };
+	const size_t local_size[3] = { 32, 32, 0 };
 	clEnqueueNDRangeKernel(queue, kernel, 2, NULL, global_size, local_size, 0, NULL, NULL);
 
 	if (!(svm & CL_DEVICE_SVM_FINE_GRAIN_SYSTEM))
