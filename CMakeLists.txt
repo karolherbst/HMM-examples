@@ -51,3 +51,12 @@ target_link_libraries(fma_struct_ptrs
 	HMMExamplesBase
 	m
 )
+
+add_executable(mat_mul
+	mat_mul.c
+)
+target_link_libraries(mat_mul
+	OpenCL::OpenCL
+	HMMExamplesBase
+	m
+)
