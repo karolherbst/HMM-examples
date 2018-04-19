@@ -114,7 +114,7 @@ cl_int initCL(const char *filename, cl_context *context, cl_kernel *kernel, cl_c
 		return -1;
 	}
 
-	cl_program program = clCreateProgramWithSource(*context, 1, (const char **)&file_buffer, NULL, NULL);
+	cl_program program = clCreateProgramWithSource(*context, 1, (const char **)&file_buffer, &bytes_read, NULL);
 	free(file_buffer);
 
 	ret = clBuildProgram(program, 1, &default_device, NULL, NULL, NULL);
