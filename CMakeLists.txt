@@ -60,3 +60,12 @@ target_link_libraries(mat_mul
 	HMMExamplesBase
 	m
 )
+
+add_executable(convert_test
+	convert_test.c
+)
+target_link_libraries(convert_test
+	OpenCL::OpenCL
+	HMMExamplesBase
+	m
+)
