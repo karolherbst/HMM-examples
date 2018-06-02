@@ -11,16 +11,8 @@ add_library(HMMExamplesBase STATIC
 	base.c
 	base.h
 	defines.h
-)
-
-add_executable(linkedList
-	example_list.c
-	example_list.h
-	linked_list.c
-)
-target_link_libraries(linkedList
-	OpenCL::OpenCL
-	HMMExamplesBase
+	linked_list.h
+	linked_list_number.h
 )
 
 add_executable(fma
@@ -65,6 +57,15 @@ add_executable(convert_test
 	convert_test.c
 )
 target_link_libraries(convert_test
+	OpenCL::OpenCL
+	HMMExamplesBase
+	m
+)
+
+add_executable(linked_list_insertion_sort
+	linked_list_insertion_sort.c
+)
+target_link_libraries(linked_list_insertion_sort
 	OpenCL::OpenCL
 	HMMExamplesBase
 	m
