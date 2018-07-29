@@ -18,7 +18,7 @@ int main() {
 	if (ret)
 		return ret;
 
-	const uint32_t size32 = 28;
+	const uint32_t size32 = 40;
 	const uint32_t size64 = 1;
 	const uint64_t byteSize32 = size32 * sizeof(uint32_t);
 	const uint64_t byteSize64 = size64 * sizeof(uint64_t);
@@ -54,16 +54,31 @@ int main() {
 	result32[17] = 0x3f7fffff;
 	result32[18] = 0x3f800000;
 	result32[19] = 0x3f7fffff;
-	// LONG_MAX -> float: rte, rtz, rtp, rtn
+	// ULONG_MAX -> float: rte, rtz, rtp, rtn
 	result32[20] = 0x5f800000;
 	result32[21] = 0x5f7fffff;
 	result32[22] = 0x5f800000;
 	result32[23] = 0x5f7fffff;
+	// ULONG_MIN -> float: rte, rtz, rtp, rtn
+	result32[24] = 0x00000000;
+	result32[25] = 0x00000000;
+	result32[26] = 0x00000000;
+	result32[27] = 0x00000000;
 	// 9223371487098962000 -> float: rte, rtz, rtp, rtn
-	result32[24] = 0x5effffff;
-	result32[25] = 0x5effffff;
-	result32[26] = 0x5f000000;
-	result32[27] = 0x5effffff;
+	result32[28] = 0x5effffff;
+	result32[29] = 0x5effffff;
+	result32[30] = 0x5f000000;
+	result32[31] = 0x5effffff;
+	// ULONG_MAX -> float: rte, rtz, rtp, rtn
+	result32[32] = 0x5f000000;
+	result32[33] = 0x5effffff;
+	result32[34] = 0x5f000000;
+	result32[35] = 0x5effffff;
+	// ULONG_MIN -> float: rte, rtz, rtp, rtn
+	result32[36] = 0xdf000000;
+	result32[37] = 0xdf000000;
+	result32[38] = 0xdf000000;
+	result32[39] = 0xdf000000;
 
 	result64[0] = 0;
 
