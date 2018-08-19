@@ -11,6 +11,7 @@ add_library(HMMExamplesBase STATIC
 	base.c
 	base.h
 	defines.h
+	fault.c
 	linked_list.h
 	linked_list_number.h
 )
@@ -69,4 +70,12 @@ target_link_libraries(linked_list_insertion_sort
 	OpenCL::OpenCL
 	HMMExamplesBase
 	m
+)
+
+add_executable(fault
+	fault.c
+)
+target_link_libraries(fault
+	OpenCL::OpenCL
+	HMMExamplesBase
 )
