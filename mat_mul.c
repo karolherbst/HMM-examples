@@ -38,7 +38,8 @@ int main() {
 	const uint32_t m3Size = m3elements * sizeof(float);
 
 	float *res = calloc(m3elements, sizeof(float));
-	float *correct_results = calloc(m3elements, sizeof(float));
+	float *correct_results_fma = calloc(m3elements, sizeof(float));
+	float *correct_results_mad = calloc(m3elements, sizeof(float));
 
 	float *m1 = malloc(m1Size);
 	float *m2 = malloc(m2Size);
@@ -51,10 +52,14 @@ int main() {
 
 	for (int i = 0; i < m3height; ++i) {
 		for (int j = 0; j < m3width; ++j) {
-			float result = 0;
-			for (int k = 0; k < m1width; ++k)
-				result += m1[i * m1width + k] * m2[k * m2width + j];
-			correct_results[i * m3width + j] = result;
+			float result_mad = 0.0;
+			float result_fma = 0.0;
+			for (int k = 0; k < m1width; ++k) {
+				result_mad += m1[i * m1width + k] * m2[k * m2width + j];
+				result_fma = fma(m1[i * m1width + k], m2[k * m2width + j], result_fma);
+			}
+			correct_results_mad[i * m3width + j] = result_mad;
+			correct_results_fma[i * m3width + j] = result_fma;
 		}
 	}
 
@@ -113,15 +118,14 @@ int main() {
 	for (int i = 0; i < m3height; ++i) {
 		printf("|");
 		for (int j = 0; j < m3width; ++j) {
-			printf(" %11.5f ", correct_results[i * m3width + j]);
-		}
-		printf("|\n");
-	}
-	printf("got (OpenCL):\n");
-	for (int i = 0; i < m3height; ++i) {
-		printf("|");
-		for (int j = 0; j < m3width; ++j) {
-			printf(" %11.5f ", res[i * m3width + j]);
+			float cpu_fma = correct_results_fma[i * m3width + j];
+			float cpu_mad = correct_results_mad[i * m3width + j];
+			float gpu = res[i * m3width + j];
+
+			if (cpu_fma != gpu && cpu_mad != gpu)
+				printf("!%11.5f ", res[i * m3width + j]);
+			else
+				printf(" %11.5f ", res[i * m3width + j]);
 		}
 		printf("|\n");
 	}
