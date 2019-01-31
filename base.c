@@ -121,7 +121,7 @@ cl_int initCL(const char *filename, cl_context *context, cl_kernel *kernel, cl_c
 	if (ret == CL_BUILD_PROGRAM_FAILURE || ret == CL_COMPILE_PROGRAM_FAILURE) {
 		char *build_log = malloc(sizeof(char) * 10000);
 		clGetProgramBuildInfo(program, default_device, CL_PROGRAM_BUILD_LOG, 10000, build_log, NULL);
-		printf("%s\n", build_log);
+		printf("build failed:\n%s\n", build_log);
 		free(build_log);
 		return ret;
 	} else if (ret) {

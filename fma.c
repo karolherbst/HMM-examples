@@ -61,9 +61,12 @@ int main() {
 		return ret;
 	}
 
-	const size_t global_size[3] = { size, 0, 0 };
-	const size_t local_size[3] = { 1, 0, 0 };
-	clEnqueueNDRangeKernel(queue, kernel, 1, NULL, global_size, local_size, 0, NULL, NULL);
+	const size_t global_size[3] = { size, 1, 1 };
+	ret = clEnqueueNDRangeKernel(queue, kernel, 3, NULL, global_size, NULL, 0, NULL, NULL);
+	if (ret) {
+		printf("Failed to launch kernel\n");
+		return ret;
+	}
 
 	if (!(svm & CL_DEVICE_SVM_FINE_GRAIN_SYSTEM))
 		clEnqueueReadBuffer(queue, outBuffer, 0, 0, byteSize, res, 0, NULL, NULL);
