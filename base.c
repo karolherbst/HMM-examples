@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <sys/stat.h>
 
 #include "base.h"
@@ -90,14 +91,19 @@ cl_int initCL(const char *filename, cl_context *context, cl_kernel *kernel, cl_c
 		return ret;
 	}
 
-	FILE *fd = fopen(filename, "r");
+	char *path = malloc(sizeof(*path) * strlen(xstr(CL_FILES_DIR)) + strlen(filename) + 1);
+	strcpy(path, xstr(CL_FILES_DIR));
+	strcat(path, filename);
+	FILE *fd = fopen(path, "r");
 	if (!fd) {
-		printf("Failed to open file %s\n", filename);
+		printf("Failed to open file %s\n", path);
+		free(path);
 		return -1;
 	}
 
 	struct stat st;
-	stat(filename, &st);
+	stat(path, &st);
+	free(path);
 	if (!st.st_size) {
 		printf("Kernel source file is empty\n");
 		return -1;

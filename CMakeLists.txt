@@ -6,7 +6,12 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 find_package(OpenCL 2.0)
 
-include_directories(${CMAKE_CURRENT_DIRECTORY})
+add_definitions(
+	-DCL_FILES_DIR=${CMAKE_CURRENT_SOURCE_DIR}/
+	-DCL_TARGET_OPENCL_VERSION=220
+	-DCL_USE_DEPRECATED_OPENCL_1_2_APIS
+)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_library(HMMExamplesBase STATIC
 	base.c
 	base.h
