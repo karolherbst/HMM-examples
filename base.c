@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -148,4 +149,27 @@ cl_int initCL(const char *filename, cl_context *context, cl_kernel *kernel, cl_c
 	}
 
 	return 0;
+}
+
+void *SVMAlloc(cl_context context, cl_svm_mem_flags flags, size_t size, cl_uint alignment, cl_device_svm_capabilities svm)
+{
+	void *res = NULL;
+	if (svm & CL_DEVICE_SVM_FINE_GRAIN_SYSTEM || !svm) {
+		if (alignment < sizeof(void *))
+			alignment = sizeof(void *);
+		int err = posix_memalign(&res, alignment, size);
+		assert(!err);
+	} else {
+		res = clSVMAlloc(context, flags, size, alignment);
+	}
+	assert(res);
+	return res;
+}
+
+void SVMFree(cl_context context, void *ptr, cl_device_svm_capabilities svm)
+{
+	if (svm & CL_DEVICE_SVM_FINE_GRAIN_SYSTEM || !svm)
+		free(ptr);
+	else
+		clSVMFree(context, ptr);
 }
